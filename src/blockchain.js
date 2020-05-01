@@ -206,7 +206,7 @@ class Blockchain {
                         console.log(data.owner===address)
                         if(data.owner===address)
                         {
-                            stars.push(block)
+                            stars.push(data)
                         }
                     }
                 })
@@ -229,15 +229,17 @@ class Blockchain {
         let self = this;
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
+            let prevBlockHash = null
             await self.chain.map(block=>{
                 block.validate().then(valid=>{
-                    if(!valid)
+                    if(!valid || block.previousBlockHash !== prevBlockHash)
                     {
                         errorLog.push({
                             error: "Issue!! Validation Error",
                             InvalidBlock: block
                         })
                     }
+                    prevBlockHash = block.prevBlockHash;
                 }).catch(e=>{
                     console.log(e)
                 })
